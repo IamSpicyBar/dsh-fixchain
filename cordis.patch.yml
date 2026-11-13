@@ -1,0 +1,10 @@
+# dsh-fixchain bundle patch: mounts the /fixchain human command. Requires the
+# `commands` service of dsh-base; Session lookup uses `sessionPersistence`.
+# Point `a2hMemory` at an a2h-memory checkout with dsh support (profile patch):
+#
+#   - id: dsh-fixchain
+#     config:
+#       a2hMemory: /path/to/a2h-memory
+- insert:
+    - id: dsh-fixchain
+      name: 'dsh-fixchain'

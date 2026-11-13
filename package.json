@@ -1,0 +1,43 @@
+{
+  "name": "dsh-fixchain",
+  "version": "0.1.0",
+  "description": "Repair-chain attribution for DeepSeek Harness migrations: /fixchain views dsh Session trajectories in the inquiry UI, prepares a dsh migration + repair for card making, and runs the card session inside dsh",
+  "type": "module",
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "index.js",
+    "lib",
+    "cordis.patch.yml",
+    "README.md"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "engines": {
+    "node": ">=24.9.0",
+    "dsh": ">=0.2.2-rc.1 <0.3.0"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/schemastery": "~3.19.0"
+  },
+  "devDependencies": {
+    "@deepseek-ai/schemastery": "~3.19.0"
+  },
+  "scripts": {
+    "smoke": "node scripts/smoke.mjs"
+  },
+  "keywords": [
+    "dsh-plugin",
+    "deepseek-harness",
+    "migration",
+    "attribution",
+    "memory"
+  ],
+  "license": "MIT"
+}
