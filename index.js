@@ -17,7 +17,7 @@
 import { spawn, spawnSync } from 'node:child_process'
 import { createWriteStream, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { homedir } from 'node:os'
-import { join, resolve, dirname } from 'node:path'
+import { join, resolve, dirname, delimiter } from 'node:path'
 import Schema from '@deepseek-ai/schemastery'
 import { pythonCommand, runPython, startServer, stopServer } from './lib/python.js'
 import { locateSession } from './lib/sessions.js'
@@ -199,7 +199,7 @@ function cards(s, workers, tokens) {
   const args = [...s.dsh.slice(1), '--profile', s.workerProfile, '--json', '--approval-policy', 'never',
     ...(resume ? ['--session-id', state.sessionId] : []), resume ? `${PROMPT}${RESUME}` : PROMPT]
   const child = spawn(s.dsh[0], args, { cwd: run, windowsHide: true,
-    env: { ...process.env, ...(s.runtime ? { DSH_HOME: join(dirname(s.runtime), 'dsh') } : {}), MIGLOOP_ANALYSIS_CONTEXT: context, PYTHONIOENCODING: 'utf-8', PYTHONDONTWRITEBYTECODE: '1' } })
+    env: { ...process.env, ...(s.runtime ? { DSH_HOME: join(dirname(s.runtime), 'dsh'), PATH: resolve(dirname(readJson(s.runtime).dshCli), '../../../.bin') + delimiter + process.env.PATH } : {}), MIGLOOP_ANALYSIS_CONTEXT: context, PYTHONIOENCODING: 'utf-8', PYTHONDONTWRITEBYTECODE: '1' } })
   workers.set(run, child)
   const events = createWriteStream(join(run, `dsh-worker-${n}.jsonl`))
   const stderr = createWriteStream(join(run, `dsh-worker-${n}.stderr.log`))
