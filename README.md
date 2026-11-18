@@ -1,3 +1,26 @@
+# dsh-fixchain · Studio 0.2.0-studio.1
+
+这是 RSI Studio 的可运行离线适配 fork，上游为 hxy450/dsh-fixchain@debe72eb。制卡与归并复用公开 hxy450/migloop@c72c0db 的 skills 0.10.10，**无需 a2h-memory checkout 或 feat/dsh-adapter 分支**。
+
+先按 [Memory RSI 控制台](https://github.com/IamSpicyBar/dsh-memory-eval) 的 README 下载发布包并执行 setup。把其状态目录的 runtime.json 通过 HMBOT_MEMORY_RUNTIME 指向本插件，随后安装到独立 DSH profile。
+
+    export HMBOT_MEMORY_RUNTIME="$HOME/.hmbot-memory-rsi/runtime.json"
+    dsh plugin --profile YOUR_PROFILE add /absolute/path/to/this/repo
+
+离线入口：
+
+    /fixchain prepare --offline "/absolute/offline-config.json" --out "/new/run"
+    /fixchain cards "/new/run"
+    /fixchain check "/new/run"
+
+offline-config.json 明确包含 materials 绝对路径、format（claude / codex / deveco / dsh / a2h-export/4 / native-pool）、app、可选 baseStore、scope、maxIssues。DSH 原始 generation 另显式指定 sessions 路径数组；不猜选最近会话。可选 checkpointRepository / generationRef / finalRef 保留历史 Git 对象与修复 diff。飞轮导出必须先由控制台校验 manifest 及所有 run/epoch 后交入。
+
+提供 DSH 工具 memory_distill（prepare/check）与可直接 import 的 ./offline API。控制台与原生命令共用同一入口；不另实现一套制卡算法。交付检查要求 completed、来源一致的有效卡、所有派工闭合、精确 store revision 以及完整阅读包摘要。partial、缺片、缺 completion 均不能当成已完成优化。模型制卡会产生费用，prepare/check 不调用模型。
+
+下面保留上游 0.1.0 的原始说明；其中 a2h-memory 专用 legacy 入口仅用于已有该分支的旧环境，Studio 新入口使用上述独立 MigLoop 运行包。
+
+---
+
 # dsh-fixchain
 
 DeepSeek Harness（dsh）插件：对在 dsh 里做的迁移和返修做返修链路归因（→ 情景卡 → 经验库新版本），也能只看轨迹不分析。
