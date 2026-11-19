@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "hmbot.rsi.component-capabilities/1",
+  "protocol": "hmbot.rsi/1",
+  "integration": "adapter",
+  "roles": [
+    "diagnosis",
+    "optimization"
+  ],
+  "supportedDomains": [
+    "migration-repair"
+  ],
+  "inputFormats": [
+    "claude",
+    "codex",
+    "deveco",
+    "dsh",
+    "a2h-export/4",
+    "native-pool"
+  ],
+  "outputs": [
+    "repair-issues",
+    "evidence-cards",
+    "memory-candidate"
+  ],
+  "runtimeSchema": "hmbot.rsi.distillation-runtime/1",
+  "limitations": [
+    "PPT-specific diagnosis/rubrics have not been validated",
+    "Does not modify Skill candidates",
+    "No dependency on evaluation or Studio UI; public MigLoop skills/runtime required"
+  ]
+}

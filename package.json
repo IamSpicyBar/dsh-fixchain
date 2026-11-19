@@ -1,19 +1,21 @@
 {
   "name": "dsh-fixchain",
-  "version": "0.2.0-studio.1",
+  "version": "0.2.1-studio.1",
   "description": "Repair-chain attribution for DeepSeek Harness migrations: /fixchain views dsh Session trajectories in the inquiry UI, prepares a dsh migration + repair for card making, and runs the card session inside dsh",
   "type": "module",
   "main": "index.js",
   "exports": {
     ".": "./index.js",
     "./offline": "./lib/offline.js",
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./capabilities": "./capabilities.json"
   },
   "files": [
     "index.js",
     "lib",
     "cordis.patch.yml",
-    "README.md"
+    "README.md",
+    "capabilities.json"
   ],
   "dsh": {
     "bundle": {

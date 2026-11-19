@@ -1,10 +1,18 @@
-# dsh-fixchain · Studio 0.2.0-studio.1
+# dsh-fixchain · Studio 0.2.1-studio.1
 
 这是 RSI Studio 的可运行离线适配 fork，上游为 hxy450/dsh-fixchain@debe72eb。制卡与归并复用公开 hxy450/migloop@c72c0db 的 skills 0.10.10，**无需 a2h-memory checkout 或 feat/dsh-adapter 分支**。
 
-先按 [Memory RSI 控制台](https://github.com/IamSpicyBar/dsh-memory-eval) 的 README 下载发布包并执行 setup。把其状态目录的 runtime.json 通过 HMBOT_MEMORY_RUNTIME 指向本插件，随后安装到独立 DSH profile。
+0.2.1 将离线制备／交付检查脚本收回本插件，消除对 Memory 评测插件、控制台及 pluginRoot 路径的反向依赖。公开调用入口仍为 `./offline` 和 `memory_distill prepare/check`。能力声明见 capabilities.json：可作为诊断和 Memory 候选优化步骤；目前验证领域为迁移返修，PPT 专用诊断尚未验收，也不直接改写 Skill 候选。
 
-    export HMBOT_MEMORY_RUNTIME="$HOME/.hmbot-memory-rsi/runtime.json"
+可以按 [Memory RSI 控制台](https://github.com/IamSpicyBar/dsh-memory-eval) 的 README 下载发布包并执行 setup；新版会生成 distillation-runtime.json。也可独立提供以下最小 runtime，仅需 Python、公开 MigLoop 源码及已构建 skills，完全不需要评测仓库或 Studio UI：
+
+```json
+{"schemaVersion":"hmbot.rsi.distillation-runtime/1","python":"/absolute/venv/bin/python","skills":"/absolute/built-skills","migloop":{"directory":"/absolute/public-migloop"}}
+```
+
+将该文件通过 HMBOT_MEMORY_RUNTIME 指向本插件，随后安装到独立 DSH profile。旧 hmbot.memory.runtime/1 仍可读取，新的执行路径不使用其中的 evaluation、pluginRoot 等字段。
+
+    export HMBOT_MEMORY_RUNTIME="$HOME/.hmbot-memory-rsi/distillation-runtime.json"
     dsh plugin --profile YOUR_PROFILE add /absolute/path/to/this/repo
 
 离线入口：
