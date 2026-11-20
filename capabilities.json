@@ -7,7 +7,8 @@
     "optimization"
   ],
   "supportedDomains": [
-    "migration-repair"
+    "migration-repair",
+    "general-task-experimental"
   ],
   "inputFormats": [
     "claude",
@@ -24,8 +25,46 @@
   ],
   "runtimeSchema": "hmbot.rsi.distillation-runtime/1",
   "limitations": [
-    "PPT-specific diagnosis/rubrics have not been validated",
+    "General task intake is explicit and experimental; domain-specific diagnosis and rubrics need real verification. No actual deviation/repair evidence means no forced card.",
     "Does not modify Skill candidates",
     "No dependency on evaluation or Studio UI; public MigLoop skills/runtime required"
-  ]
+  ],
+  "rsiCapabilities": {
+    "schemaVersion": "hmbot.rsi.component-capabilities/1",
+    "runtimeId": "dsh-fixchain",
+    "hostHarnesses": [
+      "dsh"
+    ],
+    "bindings": [
+      {
+        "assetKind": "memory",
+        "assetFormats": [
+          "migloop-memory/1"
+        ],
+        "roles": [
+          "diagnosis",
+          "optimization"
+        ],
+        "inputFormats": [
+          "dsh",
+          "claude",
+          "codex",
+          "deveco",
+          "a2h-export/4",
+          "native-pool"
+        ],
+        "executionModes": [
+          "none"
+        ],
+        "taskHarnesses": [
+          "any"
+        ]
+      }
+    ]
+  },
+  "domainModeConfiguration": {
+    "default": "migration-repair",
+    "experimental": "general-task",
+    "lineage": "legacy migration_id groups evidence, not migration semantics"
+  }
 }

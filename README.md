@@ -96,3 +96,7 @@ node scripts/smoke.mjs --dsh <dsh 的 bin.js 或 dsh> --a2h-memory <checkout> \
 - 制卡质量取决于 worker 模型；用 deepseek-flash 跑出的卡与 Claude Code 输入走同一套 skill、同一个 pack 检查器和同一个 `distill.py check`，但没有和 Opus 制卡做过质量对比。
 - `distill.py run`（Claude Code 宿主）不变；dsh 宿主由本插件起会话、管续跑。
 - dsh 会话日志不记录 dsh 版本号，卡片里的客户端版本保持未知。
+
+## General task intake (experimental)
+
+Set `domain: "general-task"` in offline preparation config to use a real task trace instead of migration assumptions. Default remains `migration-repair`. Native DSH `session.v4.jsonl[.zstd]` is supported via the public lossless reader; explicitly select the actual generation. No event is reconstructed from prose. General jobs use task/Skill requirements as authority, omit the migration-specific holdout app, and preserve legacy lineage names. Cards still require actual deviation and repair evidence; success-only traces must not be forced into failure cards. Domain/PPT quality verification is separate from input-format compatibility.

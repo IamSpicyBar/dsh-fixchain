@@ -1,6 +1,6 @@
 {
   "name": "dsh-fixchain",
-  "version": "0.2.1-studio.1",
+  "version": "0.3.0-studio.1",
   "description": "Repair-chain attribution for DeepSeek Harness migrations: /fixchain views dsh Session trajectories in the inquiry UI, prepares a dsh migration + repair for card making, and runs the card session inside dsh",
   "type": "module",
   "main": "index.js",

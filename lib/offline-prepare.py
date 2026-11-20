@@ -35,6 +35,9 @@ def command(args):
 
 def prepare(config, output, runtime):
     c, rt = read(config), read(runtime)
+    domain = c.get("domain", "migration-repair")
+    if domain not in {"migration-repair", "general-task"}:
+        raise ValueError("Explicit supported task domain is required")
     output = Path(output).absolute()
     source = Path(c["materials"]).resolve()
     if output.exists() or output.is_relative_to(source) or source.is_relative_to(output):
@@ -135,11 +138,13 @@ def prepare(config, output, runtime):
         command([sys.executable, memory, "init", "--store", output / "store"])
     revision = read(output / "store/HEAD.json")["revision"]
     command([sys.executable, memory, "export", "--store", output / "store", "--out", output / "base-memory"])
-    job = {"kind": "session", "worker_host": "dsh", "app": c.get("app", source.name), "migration_id": c.get("serverSessionId"), "local_migration_id": local_id,
+    job = {"kind": "session", "domain": domain, "worker_host": "dsh", "app": c.get("app", source.name), "migration_id": c.get("serverSessionId"), "local_migration_id": local_id,
            "run": str(output), "store": str(output / "store"), "materials": str(materials), "python": sys.executable,
            "skill": str(output / "skills/migloop-session-to-memory/SKILL.md"), "memory_library_revision": revision,
            "current_library_reading": "base-memory/index.md", "server_metadata": str(output / "migration-metadata.json"), "generation_root": c.get("generationRoot"), "repair_roots": c.get("repairRoots", []),
-           "boundary_evidence": c.get("boundaryEvidence", {}), "holdout_apps": c.get("holdoutApps", ["ColorLines"]), "source_format": c["format"], "scope_note": c.get("scope", ""), "max_issues": c.get("maxIssues", 1)}
+           "boundary_evidence": c.get("boundaryEvidence", {}), "holdout_apps": c.get("holdoutApps", [] if domain == "general-task" else ["ColorLines"]), "source_format": c["format"], "scope_note": c.get("scope", ""), "max_issues": c.get("maxIssues", 1)}
+    if domain == "general-task":
+        job["domain_contract"] = "This is a general agent task, not an application migration. Legacy migration IDs only group evidence. Establish generation/observation boundaries from the actual task trace. Use the task requirements and loaded Skill as domain authority. Investigate only actual deviations with observed repair/edit evidence; no repair means no forced card. Do not invent Android/Harmony assumptions, final correctness, tool use, or histories. Retained output alone does not prove task acceptance."
     if c.get("checkpointRepository"):
         repo = str(Path(c["checkpointRepository"]).resolve())
         generation = command(["git", "--git-dir=" + repo, "rev-parse", "--verify", "--end-of-options", c["generationRef"] + "^{commit}"])
@@ -149,7 +154,7 @@ def prepare(config, output, runtime):
         (output / "evidence/retained-application.patch").write_bytes(patch)
         job.update(checkpoint_repository_read_only=repo, generation_checkpoint=generation, final_checkpoint=final, retained_change_evidence="evidence/retained-application.patch")
     write(output / "job.json", job)
-    (output / "CLAUDE.md").write_text("# Memory RSI offline job\n\nRead job.json, then the exact skill at its skill path. Honor job.scope_note and max_issues; do not claim full migration coverage for this bounded pilot. Follow triage → independent card subagents → memory maintain. Historical materials and checkpoint repository are read-only. Work only in this run. Do not use neighboring experiments or held-out apps. Boundaries missing from the job must be established from original evidence; never invent them. Every issue needs an independent subagent; give each subagent its dispatch job path and the absolute skills/migloop-build-cards/SKILL.md path. Read relevant evidence spans, never transmit an entire source archive. Export memory with --link-cards to memory/index.md. Deliver REPORT.md and completion.json with status, reason, tasks, cards, revision and memory_index. A blocked/partial delivery is not an accepted experiment.\n", encoding="utf-8")
+    (output / "CLAUDE.md").write_text("# Memory RSI offline job\n\nRead job.json, then the exact skill at its skill path. Honor job.scope_note and max_issues; do not claim complete coverage beyond the declared domain and observed trace. Read job.domain_contract when present; migration_id is a legacy lineage key, not a domain assertion. Follow triage → independent card subagents → memory maintain. Historical materials and checkpoint repository are read-only. Work only in this run. Do not use neighboring experiments or held-out apps. Boundaries missing from the job must be established from original evidence; never invent them. Every issue needs an independent subagent; give each subagent its dispatch job path and the absolute skills/migloop-build-cards/SKILL.md path. Read relevant evidence spans, never transmit an entire source archive. Export memory with --link-cards to memory/index.md. Deliver REPORT.md and completion.json with status, reason, tasks, cards, revision and memory_index. A blocked/partial delivery is not an accepted experiment.\n", encoding="utf-8")
     return {"prepared": str(output), "materials": len(files), "start_revision": revision, "worker_host": "dsh", "local_migration_id": local_id}
 
 
